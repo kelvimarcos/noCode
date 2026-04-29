@@ -1,0 +1,45 @@
+:root {
+  --bg: #07061a;
+  --surface: #171434;
+  --surface-2: #211b46;
+  --primary: #6b5cff;
+  --text: #f0efff;
+  --muted: #9f9ac6;
+  --danger: #ff4b6e;
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, #11103b, var(--bg) 40%);
+  color: var(--text);
+}
+.container { max-width: 1120px; margin: 0 auto; padding: 16px; }
+.header, .card { background: rgba(23,20,52,.92); border: 1px solid #2e2757; border-radius: var(--radius); }
+.header { position: sticky; top: 8px; padding: 14px 18px; display:flex; justify-content:space-between; align-items:center; z-index: 5; }
+.tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 16px 0; }
+.tab { border:1px solid #2e2757; background: transparent; color: var(--muted); padding:10px; border-radius: 12px; cursor:pointer; }
+.tab.active { background: var(--surface-2); color: var(--text); }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap: 16px; }
+.card { padding: 16px; }
+input, select, button { width:100%; padding:10px 12px; border-radius: 10px; border:1px solid #383062; background:#09081f; color: var(--text); }
+button.primary { background: var(--primary); border: none; font-weight: 700; }
+button.danger { color: var(--danger); border-color: #4b2231; background: transparent; }
+.wheel {
+  width: 280px; height: 280px; margin: 16px auto; border-radius: 50%;
+  background: conic-gradient(#6b5cff 0 20%, #e64f9b 20% 50%, #2e274b 50% 100%);
+  border: 6px solid #3f3568;
+}
+.stat-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.stat { padding: 14px; border-radius: 12px; background: var(--surface-2); }
+.modal {
+  max-width: 380px; margin: 24px auto; text-align:center;
+}
+.premio-item { border:1px solid #2e2757; border-radius:12px; padding: 12px; margin-bottom: 10px; background: #1b1740; }
+.row { display:grid; grid-template-columns: repeat(5,1fr); gap: 8px; }
+@media (max-width: 900px) {
+  .grid-2, .stat-grid, .row { grid-template-columns: 1fr; }
+  .tabs { grid-template-columns: 1fr 1fr; }
+  .header { position: static; }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "spin-win-dashboard",
+  "version": "1.0.0",
+  "description": "Projeto fullstack (Node + React + HTML/CSS/JS) inspirado em painel de roleta.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT"
+}
