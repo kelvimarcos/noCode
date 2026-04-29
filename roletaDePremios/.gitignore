@@ -1,0 +1,28 @@
+# Don Spin — .gitignore
+# =====================================================
+
+# ── Configuração local com credenciais (NUNCA versionar) ──
+config.local.php
+.env
+*.env.local
+
+# ── Arquivos PHP gerados / cache ──
+*.log
+
+# ── Uploads de usuários ──
+assets/uploads/
+
+# ── Sistema operacional ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDEs ──
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Comprimidos ──
+*.zip
+*.tar.gz

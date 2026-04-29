@@ -79,62 +79,10 @@
                 </button>
             </form>
 
-            <!-- Criar conta -->
-            <div class="mt-6 pt-6 divider"></div>
-            <div class="text-center">
-                <p class="text-xs text-muted mb-2">Não tem conta?</p>
-                <button onclick="showRegister()" class="text-xs font-bold text-accent-hi hover:underline">
-                    Criar Conta Administrativa
-                </button>
-            </div>
         </div>
     </div>
 
-    <!-- ======================================================
-  ECRÃ 1b: REGISTO ADMIN
-====================================================== -->
-    <div id="register-screen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="card w-full max-w-sm p-8">
 
-            <div class="mb-8">
-                <button onclick="showLogin()"
-                    class="text-xs text-muted hover:text-white transition mb-6 flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
-                </button>
-                <h1 class="text-2xl font-black tracking-tight">Criar Conta</h1>
-                <p class="text-sm mt-1 text-muted">Preencha os dados para criar acesso admin.</p>
-            </div>
-
-            <form id="register-form" onsubmit="handleRegister(event)" class="flex flex-col gap-4">
-                <div>
-                    <label class="field-label"><i class="fa-solid fa-user mr-1"></i>Nome</label>
-                    <input id="reg-name" type="text" placeholder="Seu nome" class="admin-input" required />
-                </div>
-                <div>
-                    <label class="field-label"><i class="fa-solid fa-envelope mr-1"></i>E-mail</label>
-                    <input id="reg-email" type="email" placeholder="voce@email.com" class="admin-input" required />
-                </div>
-                <div>
-                    <label class="field-label"><i class="fa-solid fa-lock mr-1"></i>Senha</label>
-                    <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" class="admin-input"
-                        required />
-                </div>
-                <div>
-                    <label class="field-label"><i class="fa-solid fa-shield mr-1"></i>Confirmar Senha</label>
-                    <input id="reg-pass2" type="password" placeholder="Repita a senha" class="admin-input" required />
-                </div>
-                <p id="register-error"
-                    class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-center">
-                </p>
-                <p id="register-success"
-                    class="hidden text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 text-center">
-                </p>
-                <button type="submit" class="btn btn-primary w-full mt-2 py-3 text-sm uppercase tracking-widest">
-                    Criar Conta
-                </button>
-            </form>
-        </div>
-    </div>
 
     <!-- ======================================================
   ECRÃ 2: ADMIN PANEL
@@ -233,6 +181,17 @@
                                     <i class="fa-solid fa-copy"></i>
                                 </button>
                             </div>
+                        </div>
+
+                        <!-- Alterar Senha -->
+                        <div class="card-sm p-4 flex flex-col gap-3">
+                            <label class="field-label"><i class="fa-solid fa-key mr-1"></i>Alterar Senha Admin</label>
+                            <input id="new-pass" type="password" placeholder="Nova senha (mín. 6 caracteres)" class="admin-input" />
+                            <input id="new-pass2" type="password" placeholder="Confirmar nova senha" class="admin-input" />
+                            <p id="change-pass-msg" class="hidden text-xs rounded-lg px-3 py-2"></p>
+                            <button onclick="changeAdminPassword()" class="btn btn-ghost text-xs py-2 px-4 self-start">
+                                <i class="fa-solid fa-floppy-disk mr-1.5"></i>Salvar Senha
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -534,6 +493,7 @@
         </div>
     </div>
 
+    <script src="assets/js/wheel.js"></script>
     <script src="script.js"></script>
 </body>
 

@@ -38,10 +38,10 @@ async function carregarDados() {
             fetch(BASE_URL + '/api/prizes.php'),
         ]);
 
-        const dadosConfig = await resConfig.json();
+        const dadosConfig  = await resConfig.json();
         const dadosPremios = await resPremios.json();
 
-        if (dadosConfig.success) cfg = dadosConfig.config;
+        if (dadosConfig.success)  cfg    = dadosConfig.config;
         if (dadosPremios.success) premios = dadosPremios.premios;
 
         aplicarEstilosGlobais();
@@ -51,6 +51,9 @@ async function carregarDados() {
         drawWheel(canvas, 0, premios, cfg);
 
         atualizarBotaoGirar();
+
+        // Animações de entrada após carregar
+        _animarEntrada();
 
     } catch (err) {
         console.error('Erro ao carregar dados:', err);
@@ -320,5 +323,22 @@ function copiarCupom() {
             btn.innerHTML = '<i class="fa-solid fa-check"></i>';
             setTimeout(() => { btn.innerHTML = '<i class="fa-solid fa-copy"></i>'; }, 2000);
         }
+    });
+}
+
+// ── Animações de entrada ──────────────────────────────────────
+function _animarEntrada() {
+    const seletores = [
+        '#pub-logo',
+        '#pub-title',
+        '#pub-message',
+        '#wheel-wrapper',
+        '#spin-btn',
+    ];
+    seletores.forEach((sel, i) => {
+        const el = document.querySelector(sel);
+        if (!el) return;
+        el.classList.add('fade-up');
+        el.style.animationDelay = `${i * 0.08}s`;
     });
 }

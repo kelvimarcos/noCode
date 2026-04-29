@@ -1,4 +1,4 @@
-﻿/* ====================================================
+/* ====================================================
    SPIN & WIN  —  LÓGICA PRINCIPAL
    ==================================================== */
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyPublicStyles();
     metrics.views++;
     saveMetrics();
-    drawWheel(document.getElementById('pub-canvas'), 0);
+    drawWheel(document.getElementById('pub-canvas'), 0, cfg.slices, cfg);
     updateSpinBtn();
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
@@ -171,7 +171,7 @@ function logout() {
 function initAdmin() {
   switchTab('roleta');
   loadAdminInputs();
-  drawWheel(document.getElementById('admin-canvas'), 0);
+  drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg);
   updateLockUI();
   // Link público
   const publicLink = `${location.origin}${location.pathname}?view=public`;
@@ -212,7 +212,7 @@ function switchTab(tab) {
 
   if (tab === 'metricas') updateMetricsUI();
   if (tab === 'roleta') {
-    setTimeout(() => drawWheel(document.getElementById('admin-canvas'), 0), 50);
+    setTimeout(() => drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg), 50);
   }
 }
 
@@ -221,7 +221,7 @@ function c(key, val) {
   if (val !== undefined) {
     cfg[key] = val;
     localStorage.setItem('sw_config', JSON.stringify(cfg));
-    drawWheel(document.getElementById('admin-canvas'), 0);
+    drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg);
 
     const root = document.documentElement;
     if (key === 'background') root.style.setProperty('--bg', val);
@@ -301,21 +301,21 @@ function addSlice() {
   const id = Date.now();
   cfg.slices.push({ id, type: 'premio', text: 'Novo Prêmio', value: '', url: '', probability: 10, color: '#7c3aed' });
   saveCfg(); renderSlices();
-  drawWheel(document.getElementById('admin-canvas'), 0);
+  drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg);
 }
 
 function removeSlice(id) {
   if (cfg.slices.length <= 2) return alert('A roleta precisa ter pelo menos 2 fatias.');
   cfg.slices = cfg.slices.filter(s => s.id !== id);
   saveCfg(); renderSlices();
-  drawWheel(document.getElementById('admin-canvas'), 0);
+  drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg);
 }
 
 function updateSlice(id, key, val) {
   const s = cfg.slices.find(s => s.id === id);
   if (s) { s[key] = key === 'probability' ? parseFloat(val) || 0 : val; }
   saveCfg();
-  drawWheel(document.getElementById('admin-canvas'), 0);
+  drawWheel(document.getElementById('admin-canvas'), 0, cfg.slices, cfg);
   if (key === 'type') renderSlices();
 }
 
@@ -475,7 +475,7 @@ function drawWheel(canvas, rotOffset) {
 function resizeCanvas() {
   const canvas = document.getElementById('pub-canvas');
   if (!canvas) return;
-  drawWheel(canvas, currentRotation);
+  drawWheel(canvas, currentRotation, cfg.slices, cfg);
 }
 
 // ─── 12. ESTILOS DA VISTA PÚBLICA ─────────────────────
@@ -496,7 +496,7 @@ function applyPublicStyles() {
   }
 
   // Redesenhar canvas com tamanho certo
-  setTimeout(() => drawWheel(document.getElementById('pub-canvas'), 0), 50);
+  setTimeout(() => drawWheel(document.getElementById('pub-canvas'), 0, cfg.slices, cfg), 50);
 }
 
 // ─── 13. BOTÃO GIRAR — ESTADO ─────────────────────────
@@ -588,7 +588,7 @@ function spinWheel() {
     const progress = Math.min(elapsed / duration, 1);
     currentRotation = startTime + (target - startRot) * easeOut(progress);
     currentRotation = startRot + (target - startRot) * easeOut(progress);
-    drawWheel(canvas, currentRotation);
+    drawWheel(canvas, currentRotation, cfg.slices, cfg);
 
     if (progress < 1) {
       requestAnimationFrame(animate);

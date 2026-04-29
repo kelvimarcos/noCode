@@ -18,6 +18,7 @@ let locked = false;  // Estado de bloqueio (do servidor)
 
 // ── Inicialização ────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
+    mostrarSkeletonAdmin();
     await carregarTudo();
     mudarTab('roleta');
     // Link público
@@ -25,6 +26,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     const el = document.getElementById('public-link-field');
     if (el) el.value = publicLink;
 });
+
+/**
+ * Exibe skeleton loader enquanto os dados carregam.
+ */
+function mostrarSkeletonAdmin() {
+    const canvas = document.getElementById('admin-canvas');
+    if (canvas && canvas.parentElement) {
+        canvas.parentElement.classList.add('skeleton', 'skeleton-circle');
+    }
+}
+
+function ocultarSkeletonAdmin() {
+    const canvas = document.getElementById('admin-canvas');
+    if (canvas && canvas.parentElement) {
+        canvas.parentElement.classList.remove('skeleton', 'skeleton-circle');
+    }
+}
 
 /**
  * Carrega configurações e prêmios do servidor.
@@ -50,9 +68,12 @@ async function carregarTudo() {
         carregarInputsAdmin();
         renderizarPremios();
         atualizarLockUI();
+        ocultarSkeletonAdmin();
         setTimeout(() => drawWheel(document.getElementById('admin-canvas'), 0, premios, cfg), 50);
     } catch (err) {
         console.error('Erro ao carregar dados:', err);
+        ocultarSkeletonAdmin();
+        mostrarToast('Erro ao conectar com o servidor.', 'error');
     }
 }
 
@@ -435,21 +456,23 @@ function escaparHTML(str) {
         .replace(/'/g, '&#039;');
 }
 
-let toastTimeout;
-function mostrarToast(msg, tipo) {
-    let toast = document.getElementById('admin-toast');
-    if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'admin-toast';
-        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:999;padding:12px 20px;border-radius:12px;font-size:0.82rem;font-weight:600;transition:opacity 0.3s;max-width:300px;';
-        document.body.appendChild(toast);
-    }
-    toast.textContent = msg;
-    toast.style.background = tipo === 'success' ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
-    toast.style.border = tipo === 'success' ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(239,68,68,0.3)';
-    toast.style.color = tipo === 'success' ? '#86efac' : '#fca5a5';
-    toast.style.opacity = '1';
+let _toastTimer;
+function mostrarToast(msg, tipo = 'success') {
+    // Remove toast anterior se existir
+    const old = document.getElementById('admin-toast');
+    if (old) old.remove();
 
-    clearTimeout(toastTimeout);
-    toastTimeout = setTimeout(() => { toast.style.opacity = '0'; }, 3000);
+    const icons = { success: '✓', error: '✕' };
+
+    const toast = document.createElement('div');
+    toast.id        = 'admin-toast';
+    toast.className = `toast toast--${tipo}`;
+    toast.innerHTML = `<span style="font-size:1rem">${icons[tipo] || '•'}</span><span>${msg}</span>`;
+    document.body.appendChild(toast);
+
+    clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(() => {
+        toast.classList.add('toast--out');
+        setTimeout(() => toast.remove(), 230);
+    }, 3200);
 }
