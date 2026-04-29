@@ -1,0 +1,84 @@
+# ============================================================
+#  DON SPIN — Apache .htaccess
+#  Proteção de pastas sensíveis e headers de segurança.
+#  Compatível com HostGator e cPanel (Apache 2.4+).
+# ============================================================
+
+# ── Ativar mod_rewrite ──────────────────────────────────────
+Options -Indexes
+Options -MultiViews
+
+# ── Bloquear acesso direto às pastas sensíveis ──────────────
+# Nenhum visitante consegue acessar includes/ ou database/ diretamente.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Bloqueia includes/
+    RewriteRule ^includes/ - [F,L]
+
+    # Bloqueia database/
+    RewriteRule ^database/ - [F,L]
+</IfModule>
+
+# ── Negar acesso a arquivos específicos ─────────────────────
+<FilesMatch "\.(env|log|sql|bak|sh|conf|ini)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# ── Headers de Segurança HTTP ────────────────────────────────
+<IfModule mod_headers.c>
+    # Impede que a página seja carregada em iframe de outro domínio
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Impede que o browser tente adivinhar o MIME type
+    Header always set X-Content-Type-Options "nosniff"
+
+    # Ativa proteção XSS embutida no navegador (legado, mas útil)
+    Header always set X-XSS-Protection "1; mode=block"
+
+    # Controla quais informações de referência são enviadas
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Remove header que expõe a versão do servidor
+    Header always unset X-Powered-By
+    Header always unset Server
+</IfModule>
+
+# ── Segurança de sessão PHP via .htaccess ───────────────────
+<IfModule mod_php.c>
+    # Impede que JavaScript acesse cookies de sessão
+    php_flag session.cookie_httponly On
+
+    # Restringe cookies ao protocolo HTTPS (descomente em produção HTTPS)
+    # php_flag session.cookie_secure On
+
+    # Previne divulgação de informações no header
+    php_flag expose_php Off
+
+    # Usa apenas cookies para ID de sessão (não URL)
+    php_flag session.use_only_cookies On
+    php_flag session.use_trans_sid Off
+</IfModule>
+
+# ── Proteção do setup.php ────────────────────────────────────
+# Descomente após criar o primeiro admin para bloquear o setup:
+# <Files "setup.php">
+#     Order allow,deny
+#     Deny from all
+# </Files>
+
+# ── Compressão GZIP (performance) ───────────────────────────
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# ── Cache de assets estáticos ────────────────────────────────
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+</IfModule>

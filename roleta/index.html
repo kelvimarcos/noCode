@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Don Spin – Roleta de Prêmios</title>
+    <meta name="description" content="Gire a roleta e ganhe prêmios incríveis!" />
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <!-- Tailwind (utilidades) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: 'var(--bg)',
+                        surface: 'var(--surface)',
+                        surface2: 'var(--surface2)',
+                        accent: 'var(--accent)',
+                        'accent-hi': 'var(--accent-hi)',
+                        text: 'var(--text)',
+                        muted: 'var(--muted)',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-bg text-text min-h-screen overflow-x-hidden">
+
+    <!-- ======================================================
+  ECRÃ 1: LOGIN ADMIN
+====================================================== -->
+    <div id="login-screen" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="card w-full max-w-sm p-8">
+
+            <!-- Logo / Branding -->
+            <div class="mb-8">
+                <img id="login-logo-img" class="h-10 mb-6 hidden" alt="Logo" />
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+                        <i class="fa-solid fa-rotate-right text-white text-sm"></i>
+                    </div>
+                    <span class="font-black text-lg tracking-tight">Don Spin</span>
+                </div>
+                <h1 class="text-2xl font-black tracking-tight">Painel Admin</h1>
+                <p class="text-sm mt-1" style="color:var(--muted)">Acesso restrito a administradores.</p>
+            </div>
+
+            <!-- Formulário -->
+            <form id="login-form" onsubmit="handleLogin(event)" class="flex flex-col gap-4">
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-envelope mr-1"></i>E-mail</label>
+                    <input id="login-email" type="email" autocomplete="email" placeholder="admin@seusite.com"
+                        class="admin-input" required />
+                </div>
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-lock mr-1"></i>Senha</label>
+                    <input id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••"
+                        class="admin-input" required />
+                </div>
+                <p id="login-error"
+                    class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-center">
+                </p>
+                <button type="submit" class="btn btn-primary w-full mt-2 py-3 text-sm uppercase tracking-widest">
+                    Entrar
+                </button>
+            </form>
+
+            <!-- Criar conta -->
+            <div class="mt-6 pt-6 divider"></div>
+            <div class="text-center">
+                <p class="text-xs text-muted mb-2">Não tem conta?</p>
+                <button onclick="showRegister()" class="text-xs font-bold text-accent-hi hover:underline">
+                    Criar Conta Administrativa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================
+  ECRÃ 1b: REGISTO ADMIN
+====================================================== -->
+    <div id="register-screen" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="card w-full max-w-sm p-8">
+
+            <div class="mb-8">
+                <button onclick="showLogin()"
+                    class="text-xs text-muted hover:text-white transition mb-6 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar ao login
+                </button>
+                <h1 class="text-2xl font-black tracking-tight">Criar Conta</h1>
+                <p class="text-sm mt-1 text-muted">Preencha os dados para criar acesso admin.</p>
+            </div>
+
+            <form id="register-form" onsubmit="handleRegister(event)" class="flex flex-col gap-4">
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-user mr-1"></i>Nome</label>
+                    <input id="reg-name" type="text" placeholder="Seu nome" class="admin-input" required />
+                </div>
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-envelope mr-1"></i>E-mail</label>
+                    <input id="reg-email" type="email" placeholder="voce@email.com" class="admin-input" required />
+                </div>
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-lock mr-1"></i>Senha</label>
+                    <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" class="admin-input"
+                        required />
+                </div>
+                <div>
+                    <label class="field-label"><i class="fa-solid fa-shield mr-1"></i>Confirmar Senha</label>
+                    <input id="reg-pass2" type="password" placeholder="Repita a senha" class="admin-input" required />
+                </div>
+                <p id="register-error"
+                    class="hidden text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2 text-center">
+                </p>
+                <p id="register-success"
+                    class="hidden text-xs text-green-400 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 text-center">
+                </p>
+                <button type="submit" class="btn btn-primary w-full mt-2 py-3 text-sm uppercase tracking-widest">
+                    Criar Conta
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ======================================================
+  ECRÃ 2: ADMIN PANEL
+====================================================== -->
+    <div id="admin-panel" class="hidden min-h-screen flex flex-col">
+
+        <!-- Header Admin -->
+        <header class="sticky top-0 z-40 border-b" style="background:var(--surface);border-color:var(--border)">
+            <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
+                        <i class="fa-solid fa-rotate-right text-white text-xs"></i>
+                    </div>
+                    <span class="font-black text-base tracking-tight">Spin &amp; Win</span>
+                    <span class="badge badge-accent text-[0.6rem] ml-1">Admin</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="copyPublicLink()" class="btn btn-ghost text-xs py-2 px-3 gap-1.5">
+                        <i class="fa-solid fa-share-nodes text-accent-hi"></i>
+                        <span class="hidden sm:inline">Compartilhar</span>
+                    </button>
+                    <button onclick="logout()"
+                        class="btn btn-ghost text-xs py-2 px-3 gap-1.5 text-red-400 border-red-500/20 hover:bg-red-500/08">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span class="hidden sm:inline">Sair</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Conteúdo -->
+        <div class="max-w-6xl mx-auto w-full px-4 py-6 flex flex-col gap-6 flex-1">
+
+            <!-- Nav Tabs -->
+            <nav class="admin-nav">
+                <button class="admin-tab active" onclick="switchTab('roleta')" data-tab="roleta">
+                    <i class="fa-solid fa-circle-dot mr-1.5"></i>Roleta
+                </button>
+                <button class="admin-tab" onclick="switchTab('premios')" data-tab="premios">
+                    <i class="fa-solid fa-gift mr-1.5"></i>Prêmios
+                </button>
+                <button class="admin-tab" onclick="switchTab('aparencia')" data-tab="aparencia">
+                    <i class="fa-solid fa-palette mr-1.5"></i>Aparência
+                </button>
+                <button class="admin-tab" onclick="switchTab('metricas')" data-tab="metricas">
+                    <i class="fa-solid fa-chart-bar mr-1.5"></i>Métricas
+                </button>
+            </nav>
+
+            <!-- ============ TAB: ROLETA ============ -->
+            <div id="tab-roleta" class="tab-content flex flex-col gap-6">
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- Preview -->
+                    <div class="card p-6 flex flex-col items-center gap-6">
+                        <div class="flex items-center justify-between w-full">
+                            <h2 class="font-bold text-sm uppercase tracking-widest text-muted">Preview</h2>
+                            <span id="admin-lock-badge" class="badge badge-green"><i
+                                    class="fa-solid fa-unlock mr-1"></i>Desbloqueado</span>
+                        </div>
+                        <div id="admin-wheel-wrapper" class="w-full max-w-[260px] aspect-square relative mt-4">
+                            <div id="admin-pointer" class="pointer-tri"></div>
+                            <canvas id="admin-canvas" class="w-full h-full block rounded-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Controles -->
+                    <div class="card p-6 flex flex-col gap-5">
+                        <h2 class="font-bold text-sm uppercase tracking-widest text-muted">Controle de Acesso</h2>
+
+                        <div class="card-sm p-4 flex flex-col gap-3">
+                            <label class="field-label"><i class="fa-solid fa-rotate-right mr-1"></i>Limite de Giros por
+                                Usuário</label>
+                            <input id="c-spinLimit" type="number" min="1" max="999" value="1" class="admin-input"
+                                oninput="c('spinLimit',this.value)" />
+                            <p class="text-xs text-muted">Número de vezes que cada usuário pode girar.</p>
+                        </div>
+
+                        <div class="card-sm p-4 flex items-center justify-between gap-4">
+                            <div>
+                                <p class="font-semibold text-sm">Roleta Bloqueada</p>
+                                <p class="text-xs text-muted mt-0.5">Quando ativo, ninguém pode girar.</p>
+                            </div>
+                            <button id="lockBtn" onclick="toggleLock()" class="btn btn-ghost text-xs py-2 px-4">
+                                <i class="fa-solid fa-lock mr-1.5"></i>Bloquear
+                            </button>
+                        </div>
+
+                        <div class="card-sm p-4 flex flex-col gap-3">
+                            <label class="field-label"><i class="fa-solid fa-link mr-1"></i>Link Público</label>
+                            <div class="flex gap-2">
+                                <input id="public-link-field" type="text" readonly
+                                    class="admin-input font-mono text-xs" />
+                                <button onclick="copyPublicLink()" class="btn btn-ghost py-2 px-3 shrink-0">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ TAB: PRÊMIOS ============ -->
+            <div id="tab-premios" class="tab-content hidden flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-bold text-sm uppercase tracking-widest text-muted">Prêmios</h2>
+                    <button onclick="addSlice()" class="btn btn-primary text-xs py-2 px-4">
+                        <i class="fa-solid fa-plus mr-1.5"></i>Adicionar
+                    </button>
+                </div>
+                <div id="slices-list" class="flex flex-col gap-3"></div>
+            </div>
+
+            <!-- ============ TAB: APARÊNCIA ============ -->
+            <div id="tab-aparencia" class="tab-content hidden flex-col gap-6">
+
+                <!-- 1. Identidade Visual (Logos e Cores Principais) -->
+                <div class="card p-6 flex flex-col gap-5">
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-muted border-b pb-3 mb-1"
+                        style="border-color:var(--border)"><i class="fa-solid fa-star text-accent mr-2"></i>Identidade
+                        Visual</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label class="field-label"><i class="fa-solid fa-image mr-1"></i>Logo Global (URL)</label>
+                            <input id="c-loginLogo" type="url" placeholder="https://..." class="admin-input"
+                                oninput="c('loginLogo',this.value)" />
+                            <input type="file" accept="image/*" onchange="imgUpload(this,'loginLogo')"
+                                class="mt-2 text-xs text-muted" />
+                            <p class="text-[0.65rem] text-muted mt-1">Visível na tela de login e cabeçalho público.</p>
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-droplet mr-1"></i>Cor Primária
+                                (Destaque)</label>
+                            <div class="flex gap-3 items-center">
+                                <input id="c-accentColor" type="color" class="admin-input w-14 p-1 h-12 cursor-pointer"
+                                    oninput="c('accentColor',this.value)" />
+                                <span class="text-xs text-muted leading-tight">Usada em botões e detalhes<br />de
+                                    destaque na plataforma.</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-font mr-1"></i>Cor do Texto
+                                Principal</label>
+                            <div class="flex gap-3 items-center">
+                                <input id="c-textColor" type="color" class="admin-input w-14 p-1 h-12 cursor-pointer"
+                                    oninput="c('textColor',this.value)" />
+                                <span class="text-xs text-muted leading-tight">Define a cor base dos<br />textos,
+                                    títulos e legendas.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Tema da Plataforma (Fundo e Cards) -->
+                <div class="card p-6 flex flex-col gap-5">
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-muted border-b pb-3 mb-1"
+                        style="border-color:var(--border)"><i class="fa-solid fa-desktop text-accent mr-2"></i>Tema da
+                        Plataforma</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-fill-drip mr-1"></i>Cor de Fundo</label>
+                            <div class="flex gap-2 items-center">
+                                <input id="c-background" type="color" class="admin-input w-full p-1 h-10 cursor-pointer"
+                                    oninput="c('background',this.value)" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-layer-group mr-1"></i>Cor dos Cards</label>
+                            <div class="flex gap-2 items-center">
+                                <input id="c-cardColor" type="color" class="admin-input w-full p-1 h-10 cursor-pointer"
+                                    oninput="c('cardColor',this.value)" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-border-all mr-1"></i>Cor das Bordas</label>
+                            <div class="flex gap-2 items-center">
+                                <input id="c-cardBorderColor" type="color"
+                                    class="admin-input w-full p-1 h-10 cursor-pointer"
+                                    oninput="c('cardBorderColor',this.value)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Tema de Login -->
+                <div class="card p-6 flex flex-col gap-5">
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-muted border-b pb-3 mb-1"
+                        style="border-color:var(--border)"><i
+                            class="fa-solid fa-right-to-bracket text-accent mr-2"></i>Tema de Login</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-fill-drip mr-1"></i>Fundo do Login</label>
+                            <div class="flex gap-2 items-center">
+                                <input id="c-loginBgColor" type="color"
+                                    class="admin-input w-full p-1 h-10 cursor-pointer"
+                                    oninput="c('loginBgColor',this.value)" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-id-card mr-1"></i>Card do Login</label>
+                            <div class="flex gap-2 items-center">
+                                <input id="c-loginCardColor" type="color"
+                                    class="admin-input w-full p-1 h-10 cursor-pointer"
+                                    oninput="c('loginCardColor',this.value)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Estilo da Roleta -->
+                <div class="card p-6 flex flex-col gap-5">
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-muted border-b pb-3 mb-1"
+                        style="border-color:var(--border)"><i class="fa-solid fa-bullseye text-accent mr-2"></i>Estilo
+                        da Roleta</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-circle-dot mr-1"></i>Logo Central
+                                (URL)</label>
+                            <input id="c-logo" type="url" placeholder="https://..." class="admin-input"
+                                oninput="c('logo',this.value)" />
+                            <input type="file" accept="image/*" onchange="imgUpload(this,'logo')"
+                                class="mt-2 text-xs text-muted" />
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-caret-down mr-1"></i>Cor do
+                                Ponteiro</label>
+                            <div class="flex gap-3 items-center">
+                                <input id="c-pointerColor" type="color" class="admin-input w-14 p-1 h-12 cursor-pointer"
+                                    oninput="c('pointerColor',this.value)" />
+                                <span class="text-xs text-muted leading-tight">Indicador de sorteio<br />no topo da
+                                    roda.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Textos da Fachada / Roleta -->
+                <div class="card p-6 flex flex-col gap-5">
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-muted border-b pb-3 mb-1"
+                        style="border-color:var(--border)"><i class="fa-solid fa-language text-accent mr-2"></i>Textos
+                        da Fachada</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-heading mr-1"></i>Título Principal</label>
+                            <input id="c-title" type="text" placeholder="Gira e Ganha!" class="admin-input"
+                                oninput="c('title',this.value)" />
+                        </div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-align-left mr-1"></i>Subtítulo</label>
+                            <input id="c-message" type="text" placeholder="Tente a sua sorte!" class="admin-input"
+                                oninput="c('message',this.value)" />
+                        </div>
+                        <div class="md:col-span-2 divider my-0 border-white/5"></div>
+                        <div>
+                            <label class="field-label flex items-center gap-1" style="color:var(--green)"><i
+                                    class="fa-solid fa-trophy"></i>Título: Ganhou</label>
+                            <input id="c-winTitle" type="text" class="admin-input" oninput="c('winTitle',this.value)" />
+                        </div>
+                        <div>
+                            <label class="field-label flex items-center gap-1" style="color:var(--green)"><i
+                                    class="fa-solid fa-comment"></i>Mensagem: Ganhou</label>
+                            <input id="c-winMessage" type="text" class="admin-input"
+                                oninput="c('winMessage',this.value)" />
+                        </div>
+                        <div class="md:col-span-2 divider my-0 border-white/5"></div>
+                        <div>
+                            <label class="field-label flex items-center gap-1" style="color:var(--red)"><i
+                                    class="fa-solid fa-face-sad-tear"></i>Título: Perdeu</label>
+                            <input id="c-loseTitle" type="text" class="admin-input"
+                                oninput="c('loseTitle',this.value)" />
+                        </div>
+                        <div>
+                            <label class="field-label flex items-center gap-1" style="color:var(--red)"><i
+                                    class="fa-solid fa-comment-slash"></i>Mensagem: Perdeu</label>
+                            <input id="c-loseMessage" type="text" class="admin-input"
+                                oninput="c('loseMessage',this.value)" />
+                        </div>
+                        <div class="md:col-span-2 divider my-0 border-white/5"></div>
+                        <div>
+                            <label class="field-label"><i class="fa-solid fa-x mr-1"></i>Texto Botão do Modal</label>
+                            <input id="c-popupBtnText" type="text" class="admin-input"
+                                oninput="c('popupBtnText',this.value)" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ============ TAB: MÉTRICAS ============ -->
+            <div id="tab-metricas" class="tab-content hidden flex-col gap-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="metric-card">
+                        <span class="metric-label"><i class="fa-solid fa-eye mr-1"></i>Acessos</span>
+                        <span id="m-visits" class="metric-value">0</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label"><i class="fa-solid fa-rotate-right mr-1"></i>Giros</span>
+                        <span id="m-spins" class="metric-value">0</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label"><i class="fa-solid fa-trophy mr-1"></i>Ganhos</span>
+                        <span id="m-wins" class="metric-value">0</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label"><i class="fa-solid fa-percent mr-1"></i>Conversão</span>
+                        <span id="m-rate" class="metric-value">0%</span>
+                    </div>
+                </div>
+                <button onclick="resetMetrics()" class="btn btn-danger text-xs self-start">
+                    <i class="fa-solid fa-trash mr-1.5"></i>Resetar Métricas
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================
+  ECRÃ 3: ROLETA PÚBLICA
+====================================================== -->
+    <div id="public-view" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="card w-full max-w-md p-8 flex flex-col items-center gap-6">
+
+            <!-- Header -->
+            <div class="flex flex-col items-center gap-3 text-center">
+                <img id="pub-logo" class="h-12 object-contain hidden" />
+                <h1 id="pub-title" class="text-3xl font-black tracking-tight leading-tight"></h1>
+                <p id="pub-message" class="text-sm text-muted"></p>
+            </div>
+
+            <!-- Roleta -->
+            <div class="relative flex flex-col items-center gap-0 w-full mt-4">
+                <div id="wheel-wrapper" class="w-full max-w-[300px] aspect-square relative">
+                    <div id="pub-pointer" class="pointer-tri z-10"></div>
+                    <canvas id="pub-canvas" class="w-full h-full block rounded-full"></canvas>
+                </div>
+            </div>
+
+            <!-- Botão Girar -->
+            <div class="flex flex-col items-center gap-3 w-full">
+                <button id="spin-btn" onclick="spinWheel()" class="w-full sm:w-auto">
+                    <i class="fa-solid fa-rotate-right mr-2"></i>GIRAR
+                </button>
+                <p id="spin-disabled-msg" class="hidden text-xs text-muted flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock"></i> Bloqueado pelo administrador
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================
+  MODAL: RESULTADO DO SORTEIO
+====================================================== -->
+    <div id="result-modal" class="hidden modal-overlay">
+        <div class="card w-full max-w-sm p-8 text-center pop-in flex flex-col items-center gap-4">
+
+            <div id="modal-icon" class="text-5xl leading-none">🎉</div>
+
+            <div>
+                <h2 id="modal-title" class="text-2xl font-black tracking-tight"></h2>
+                <p id="modal-msg" class="text-sm text-muted mt-2"></p>
+            </div>
+
+            <!-- Prêmio -->
+            <div id="modal-prize-box" class="hidden w-full card-sm p-4 flex flex-col items-center gap-4">
+                <p class="text-xs font-bold uppercase tracking-widest text-muted">Seu Prêmio</p>
+                <p id="modal-prize-text" class="text-2xl font-black tracking-tight text-white"></p>
+
+                <!-- Cupom -->
+                <div id="modal-coupon-box" class="hidden w-full flex-col gap-3">
+                    <div class="divider w-full"></div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-muted">Código de Desconto</p>
+                    <div class="flex gap-2 w-full">
+                        <div class="relative flex-1">
+                            <i
+                                class="fa-solid fa-ticket absolute left-3.5 top-1/2 -translate-y-1/2 text-yellow-400/60 text-sm"></i>
+                            <input id="modal-coupon-code" type="text" readonly
+                                class="admin-input font-mono text-center text-lg tracking-widest font-black text-yellow-300 pl-10" />
+                        </div>
+                        <button onclick="copyCoupon()" id="copy-coupon-btn"
+                            class="btn btn-primary shrink-0 text-xs px-4 py-2.5">
+                            <i class="fa-solid fa-copy"></i>
+                        </button>
+                    </div>
+                    <a id="modal-coupon-url" href="#" target="_blank" rel="noopener"
+                        class="hidden btn btn-success w-full text-sm py-3 mt-1">
+                        Resgatar Agora <i class="fa-solid fa-arrow-up-right-from-square ml-1.5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <button id="modal-close-btn" onclick="closeModal()" class="btn btn-ghost w-full text-sm py-3 mt-2">
+                Fechar
+            </button>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
